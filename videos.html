@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Workflow Demo Videos | Isreal — Automation Consultant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        /* ── Video Gallery Page Styles ── */
+
+        .video-page {
+            padding: 130px 10% 80px;
+            min-height: 100vh;
+            background: var(--background);
+        }
+
+        .video-page-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .video-page-header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 12px;
+        }
+        .video-page-header h1 i {
+            color: var(--accent);
+            margin-right: 12px;
+        }
+        .video-page-header p {
+            font-size: 1.15rem;
+            color: var(--text-color);
+            opacity: 0.8;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        /* ── Filter Tabs ── */
+        .filter-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 40px;
+        }
+        .filter-tabs button {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-tabs button:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .filter-tabs button.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(110, 69, 226, 0.3);
+        }
+        .filter-tabs button .count {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.15);
+            color: inherit;
+            border-radius: 20px;
+            padding: 0 10px;
+            font-size: 0.75rem;
+            margin-left: 6px;
+        }
+        .filter-tabs button.active .count {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ── Video Grid ── */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 30px;
+        }
+
+        .video-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.35s ease;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+            opacity: 1;
+            transform: scale(1);
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            position: relative;
+        }
+        .video-card.hidden {
+            display: none;
+        }
+        .video-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 40px rgba(110, 69, 226, 0.12);
+            border-color: var(--primary);
+        }
+
+        .video-card .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            background: #0a0a1a;
+        }
+        .video-card .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            /* ── KEY FIX: Let clicks pass through to the card ── */
+            pointer-events: none;
+        }
+
+        /* ── Fallback overlay ── */
+        .video-card .video-fallback {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(10, 10, 26, 0.75);
+            color: #fff;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            padding: 20px;
+            text-align: center;
+            /* ── KEY FIX: Don't block clicks ── */
+            pointer-events: none;
+        }
+        .video-card .video-fallback i {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+        .video-card .video-fallback span {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        .video-card:hover .video-fallback {
+            opacity: 1;
+        }
+
+        .video-card .video-info {
+            padding: 18px 20px 20px;
+        }
+        .video-card .video-info h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-color);
+            line-height: 1.4;
+        }
+        .video-card .video-info .video-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .video-card .video-info .platform-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(110, 69, 226, 0.10);
+            color: var(--primary);
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            border: 1px solid rgba(110, 69, 226, 0.12);
+        }
+        .video-card .video-info .platform-tag i {
+            font-size: 0.7rem;
+        }
+        .video-card .video-info .video-id {
+            font-size: 0.7rem;
+            color: var(--text-color);
+            opacity: 0.4;
+            font-family: monospace;
+        }
+
+        /* ── Empty state ── */
+        .no-videos {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-color);
+            opacity: 0.6;
+            grid-column: 1 / -1;
+        }
+        .no-videos i {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+        .no-videos p {
+            font-size: 1.1rem;
+        }
+
+        /* ── Back button ── */
+        .back-to-workflows {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 50px;
+            padding: 14px 32px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            color: var(--text-color);
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .back-to-workflows:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateX(-4px);
+        }
+        .back-to-workflows i {
+            font-size: 1rem;
+        }
+
+        .back-btn-wrap {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 992px) {
+            .video-page {
+                padding: 120px 6% 60px;
+            }
+            .video-page-header h1 {
+                font-size: 2.4rem;
+            }
+            .video-grid {
+                grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            }
+        }
+        @media (max-width: 768px) {
+            .video-page {
+                padding: 110px 5% 50px;
+            }
+            .video-page-header h1 {
+                font-size: 2rem;
+            }
+            .filter-tabs button {
+                padding: 8px 16px;
+                font-size: 0.8rem;
+            }
+            .video-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 480px) {
+            .video-page-header h1 {
+                font-size: 1.6rem;
+            }
+            .filter-tabs {
+                gap: 6px;
+            }
+            .filter-tabs button {
+                font-size: 0.7rem;
+                padding: 6px 14px;
+            }
+        }
+
+        /* ── Platform icon colors ── */
+        .plat-monday i {
+            color: #f62b54;
+        }
+        .plat-clickup i {
+            color: #7b68ee;
+        }
+        .plat-notion i {
+            color: #000000;
+        }
+        .plat-zapier i {
+            color: #ff4a00;
+        }
+        .plat-hubspot i {
+            color: #ff7a59;
+        }
+        .plat-asana i {
+            color: #273347;
+        }
+        .plat-make i {
+            color: #00d2b2;
+        }
+        .plat-airtable i {
+            color: #fcb400;
+        }
+        .plat-gohighlevel i {
+            color: #ff6b00;
+        }
+        .plat-pipedrive i {
+            color: #f62b54;
+        }
+        .plat-zoho i {
+            color: #cd1719;
+        }
+        .plat-trello i {
+            color: #026aa7;
+        }
+        .plat-n8n i {
+            color: #29abe0;
+        }
+        .plat-excel i {
+            color: #1d6f42;
+        }
+        .plat-suitedash i {
+            color: #3b82f6;
+        }
+        .plat-google-apps-script i {
+            color: #4285f4;
+        }
+        .plat-other i {
+            color: #888;
+        }
+        .dark-mode .plat-notion i {
+            color: #ffffff;
+        }
+        .dark-mode .plat-asana i {
+            color: #e6e6e6;
+        }
+    </style>
+</head>
+<body class="dark-mode">
+
+    <div class="bg-animation"></div>
+
+    <!-- ===== HEADER ===== -->
+    <header>
+        <a href="index.html" class="logo">Isreal</a>
+        <div class="menu-container">
+            <div class="menu-toggle"><i class="fas fa-bars"></i></div>
+            <nav class="navbar">
+                <ul>
+                    <li><a href="index.html#home">Home</a></li>
+                    <li><a href="index.html#skills">Skills</a></li>
+                    <li><a href="index.html#workflow">Workflows</a></li>
+                    <li><a href="index.html#testimonials">Testimonials</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                    <li><a href="videos.html" class="active-nav">Videos</a></li>
+                </ul>
+            </nav>
+            <div class="theme-toggle-container">
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <i class="fas fa-moon"></i>
+                    <span class="toggle-ball"></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== VIDEO GALLERY ===== -->
+    <section class="video-page" id="videoGallery">
+
+        <div class="video-page-header">
+            <h1><i class="fas fa-play-circle"></i>Workflow Demo Videos</h1>
+            <p>Watch real-world automation demos across Monday.com, ClickUp, Notion, Zapier, HubSpot, and more.</p>
+            <p style="font-size:0.85rem;opacity:0.6;margin-top:8px;">
+                <i class="fas fa-info-circle"></i> Click any video card to open it on Loom
+            </p>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs" id="filterTabs"></div>
+
+        <!-- Video Grid -->
+        <div class="video-grid" id="videoGrid"></div>
+
+        <!-- Back Button -->
+        <div class="back-btn-wrap">
+            <a href="index.html#workflow" class="back-to-workflows">
+                <i class="fas fa-arrow-left"></i> Back to All Platforms
+            </a>
+        </div>
+
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+        <p class="copyright">© 2025 Isreal. All rights reserved.</p>
+    </footer>
+
+    <!-- ===== BACK TO TOP ===== -->
+    <div class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script src="script.js"></script>
+    <script>
+        // ─────────────────────────────────────────────────────────────
+        //  VIDEO DATA – All 42 Loom videos with platform tags.
+        // ─────────────────────────────────────────────────────────────
+
+        const videos = [
+            // ── Monday.com (14 videos) ──
+            {
+                id: '7ad3302062cc41ce8c7ffaa2d5e38390',
+                title: 'Lead Generation Form — Automated Workflow',
+                platform: 'Monday.com'
+            },
+            {
+                id: '47b86c89695747cd88ce8ca0aa89751a',
+                title: 'High Level / Low Level Workflow with Dialer',
+                platform: 'Monday.com'
+            },
+            {
+                id: '406317fb8f5a4337a1fc97cd75a82119',
+                title: '5-Step Automated Recruitment Workflow',
+                platform: 'Monday.com'
+            },
+            {
+                id: '203e14e719a345468cb0c343dbe131f4',
+                title: 'Monday + QuickBooks Integration',
+                platform: 'Monday.com'
+            },
+            {
+                id: '64fcc8c55ee2482db46d8400e7bc1927',
+                title: 'Client Onboarding System with Slack',
+                platform: 'Monday.com'
+            },
+            {
+                id: 'e1bfee0a3b394b28a050c412c9fd05e9',
+                title: 'Automated Task Assignment & Status Tracking',
+                platform: 'Monday.com'
+            },
+            {
+                id: '89050ded308e44e388e30c160c6a44bb',
+                title: 'Custom Dashboard & Reporting Setup',
+                platform: 'Monday.com'
+            },
+            {
+                id: '52109fb6ad834da9bc15ac7092229751',
+                title: 'Lead Scoring & Sales Pipeline Automation',
+                platform: 'Monday.com'
+            },
+            {
+                id: '900f3ddb917345a289faebacd6926227',
+                title: 'Email Notification Workflow Builder',
+                platform: 'Monday.com'
+            },
+            {
+                id: 'db70cffbdfe7430b8fdad1a13b8e8409',
+                title: 'Project Tracking Board with Dependencies',
+                platform: 'Monday.com'
+            },
+            {
+                id: 'a269a7b484654bc4bead89c2cd4deb05',
+                title: 'Time Tracking & Resource Management',
+                platform: 'Monday.com'
+            },
+            {
+                id: '8f12992c35624a5a8b8f6d01deb4eab3',
+                title: 'Client Reporting Dashboard',
+                platform: 'Monday.com'
+            },
+            {
+                id: 'c119229fe3a541dfaac6b2d33d3e6953',
+                title: 'Automated Status Updates & Alerts',
+                platform: 'Monday.com'
+            },
+
+            // ── ClickUp (3 videos) ──
+            {
+                id: 'eb5b39dd8f994cf6849e01c323c90cac',
+                title: 'Sales CRM Setup in ClickUp',
+                platform: 'ClickUp'
+            },
+             {
+                id: '14940e981f1d41cd97d7179f35d41ca1',
+                title: 'Social Media Management System',
+                platform: 'ClickUp'
+            },
+            {
+                id: '5b3ed467aa164004950cacc13767e55c',
+                title: 'Web Development Workflow in ClickUp',
+                platform: 'ClickUp'
+            },
+            {
+                id: '887e0914f3454d2f852f73052875ad8f',
+                title: 'Portfolio Management System',
+                platform: 'ClickUp'
+            },
+
+            // ── Notion (3 videos) ──
+            {
+                id: '04b6d720f2b34a7397aac8112fe0a87b',
+                title: 'Notion Dashboard Setup for Teams',
+                platform: 'Notion'
+            },
+            {
+                id: '39c12ff1bc2145ea88fbc2542bd6b0fe',
+                title: 'Notion Database & CRM Configuration',
+                platform: 'Notion'
+            },
+            {
+                id: '6615147987da4b8abaf2380499ae707b',
+                title: 'Team Collaboration Workspace in Notion',
+                platform: 'Notion'
+            },
+
+            // ── Zapier (3 videos) ──
+            {
+                id: 'ece02c1e8bc9410c9af39f88dfd96607',
+                title: 'Zapier Automation — Lead to CRM',
+                platform: 'Zapier'
+            },
+            {
+                id: 'ea9d6b87c47846c790504dbc88112b07',
+                title: 'Zapier + Slack Integration Demo',
+                platform: 'Zapier'
+            },
+            {
+                id: '973fb7e235824f31a330045f4a50156b',
+                title: 'Multi-step Zapier Workflow',
+                platform: 'Zapier'
+            },
+
+            // ── HubSpot (3 videos) ──
+            {
+                id: '7cfa043701ed4f01abfe68943265a414',
+                title: 'HubSpot Email Sequence Setup',
+                platform: 'HubSpot'
+            },
+            {
+                id: '5835e8836d894d02a65e2008a4849326',
+                title: 'HubSpot Lead Scoring & Pipeline',
+                platform: 'HubSpot'
+            },
+            {
+                id: 'b05ef4ae08d94fd99e1de2ce562b0d14',
+                title: 'HubSpot CRM Automation Demo',
+                platform: 'HubSpot'
+            },
+
+            // ── Asana (2 videos) ──
+            {
+                id: '7e8aa01dedf14e6499cf3d1c5a7d33f7',
+                title: 'Asana Project Management Setup',
+                platform: 'Asana'
+            },
+            {
+                id: '9b523b06ae98426b8659c5e2c4b1b1ac',
+                title: 'Asana Task Automation with Rules',
+                platform: 'Asana'
+            },
+
+            // ── Make (2 videos) ──
+            {
+                id: 'a827989a275e43379050b530a2707256',
+                title: 'Make.com Complex Workflow Automation',
+                platform: 'Make'
+            },
+            {
+                id: '984fba657b03430aa8dc156caaabf8a0',
+                title: 'Make + Monday Integration Demo',
+                platform: 'Make'
+            },
+
+            // ── Airtable (2 videos) ──
+            {
+                id: '12793bbe21cb45b0aaf1ba7e42c8ae72',
+                title: 'Airtable Client Onboarding System',
+                platform: 'Airtable'
+            },
+            {
+                id: '2bd2caff24a64f439dc7ab0569d0fca7',
+                title: 'Airtable Contract Management',
+                platform: 'Airtable'
+            },
+
+            // ── Pipedrive (1 video) ──
+            {
+                id: '7e465fff3d5e4783a90b27cb76f67101',
+                title: 'Pipedrive Sales Pipeline Automation',
+                platform: 'Pipedrive'
+            },
+
+            // ── GoHighLevel (1 video) ──
+            {
+                id: 'd1ffc04273b94b889fa4454b1e5309b0',
+                title: 'GoHighLevel Marketing Automation',
+                platform: 'GoHighLevel'
+            },
+
+            // ── Zoho (1 video) ──
+            {
+                id: 'f23e3673f61b44fd9036c3231126d78b',
+                title: 'Zoho CRM & Workflow Automation',
+                platform: 'Zoho'
+            },
+
+            // ── Trello (1 video) ──
+            {
+                id: 'fa03230f223f4f62bd94301d2b5915c1',
+                title: 'Trello Butler Automation Demo',
+                platform: 'Trello'
+            },
+
+            // ── n8n (1 video) ──
+            {
+                id: '45e199e735e440e68711b9233b0004d5',
+                title: 'n8n.io Self-hosted Workflow',
+                platform: 'n8n'
+            },
+
+            // ── Excel (1 video) ──
+            {
+                id: '27b2b7a1df0a4c8baf8b94efdc6777c0',
+                title: 'Advanced Excel Dashboard & Automation',
+                platform: 'Excel'
+            },
+
+            // ── SuiteDash (1 video) ──
+            {
+                id: '45ea200b8ced4b51af9e8d63b79c5b97',
+                title: 'SuiteDash All-in-One Business System',
+                platform: 'SuiteDash'
+            },
+
+            // ── Google Apps Script (3 videos) ──
+            {
+                id: '4b5a8e9a49904aaa84d7824d0d7342f0',
+                title: 'Google Apps Script — Form to CRM',
+                platform: 'Google Apps Script'
+            },
+            {
+                id: '7f9a1b2be57942fd8ba241f523ec058a',
+                title: 'Custom Integration: Wix + Monday.com',
+                platform: 'Google Apps Script'
+            },
+            {
+                id: '42dac076729c48e688478e8d0bd48d85',
+                title: 'Calendly → Monday Lead Routing',
+                platform: 'Google Apps Script'
+            },
+
+            // ── Other (1 video) ──
+            {
+                id: '123a2c43c5bc4e70b5e4b01974e432d2',
+                title: 'End-to-End Client Onboarding (no-code)',
+                platform: 'Other'
+            }
+        ];
+
+        // ─────────────────────────────────────────────────────────────
+        //  RENDER LOGIC
+        // ─────────────────────────────────────────────────────────────
+
+        const grid = document.getElementById('videoGrid');
+        const tabsContainer = document.getElementById('filterTabs');
+
+        // Get unique platforms with counts
+        const platformCounts = {};
+        videos.forEach(v => {
+            platformCounts[v.platform] = (platformCounts[v.platform] || 0) + 1;
+        });
+        const platforms = Object.keys(platformCounts).sort();
+
+        // Render filter tabs
+        function renderTabs(active = 'All') {
+            let html = `
+                <button class="active" data-filter="All">
+                    All <span class="count">${videos.length}</span>
+                </button>
+            `;
+            platforms.forEach(p => {
+                const count = platformCounts[p];
+                const isActive = active === p ? 'active' : '';
+                html += `
+                    <button class="${isActive}" data-filter="${p}">
+                        ${p} <span class="count">${count}</span>
+                    </button>
+                `;
+            });
+            tabsContainer.innerHTML = html;
+
+            tabsContainer.querySelectorAll('button').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const filter = btn.dataset.filter;
+                    tabsContainer.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    filterVideos(filter);
+                });
+            });
+        }
+
+        // Filter videos
+        function filterVideos(filter) {
+            const cards = grid.querySelectorAll('.video-card');
+            let visibleCount = 0;
+            cards.forEach(card => {
+                const platform = card.dataset.platform;
+                if (filter === 'All' || platform === filter) {
+                    card.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            const noMsg = grid.querySelector('.no-videos');
+            if (visibleCount === 0) {
+                if (!noMsg) {
+                    const msg = document.createElement('div');
+                    msg.className = 'no-videos';
+                    msg.innerHTML = `
+                        <i class="fas fa-video-slash"></i>
+                        <p>No videos found for <strong>${filter}</strong>. Try another platform.</p>
+                    `;
+                    grid.appendChild(msg);
+                } else {
+                    noMsg.style.display = 'block';
+                    noMsg.querySelector('strong').textContent = filter;
+                }
+            } else {
+                if (noMsg) noMsg.style.display = 'none';
+            }
+        }
+
+        // ── Render video cards as divs with data-url ──
+        function renderVideos() {
+            let html = '';
+            videos.forEach(v => {
+                const platformClass = v.platform.toLowerCase().replace(/\s/g, '-');
+                const iconMap = {
+                    'monday.com': 'fa-monday',
+                    'clickup': 'fa-tasks',
+                    'notion': 'fa-book',
+                    'zapier': 'fa-bolt',
+                    'hubspot': 'fa-hubspot',
+                    'asana': 'fa-check-circle',
+                    'make': 'fa-cogs',
+                    'airtable': 'fa-table',
+                    'pipedrive': 'fa-chart-line',
+                    'gohighlevel': 'fa-rocket',
+                    'zoho': 'fa-cloud',
+                    'trello': 'fa-trello',
+                    'n8n': 'fa-code-branch',
+                    'excel': 'fa-file-excel',
+                    'suitedash': 'fa-building',
+                    'google apps script': 'fa-google',
+                    'other': 'fa-play-circle'
+                };
+                const icon = iconMap[v.platform.toLowerCase()] || 'fa-play-circle';
+                const loomUrl = `https://www.loom.com/share/${v.id}`;
+
+                html += `
+                    <div class="video-card" data-platform="${v.platform}" data-url="${loomUrl}">
+                        <div class="video-wrapper">
+                            <iframe
+                                src="https://www.loom.com/embed/${v.id}"
+                                frameborder="0"
+                                webkitallowfullscreen
+                                mozallowfullscreen
+                                allowfullscreen
+                                loading="lazy"
+                                title="${v.title}"
+                            ></iframe>
+                            <div class="video-fallback">
+                                <i class="fas fa-external-link-alt"></i>
+                                <span>Watch on Loom</span>
+                            </div>
+                        </div>
+                        <div class="video-info">
+                            <h3>${v.title}</h3>
+                            <div class="video-meta">
+                                <span class="platform-tag plat-${platformClass}">
+                                    <i class="fab ${icon}"></i> ${v.platform}
+                                </span>
+                                <span class="video-id">#${v.id.slice(0, 8)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            grid.innerHTML = html;
+
+            // ── KEY FIX: Click handler on each card ──
+            document.querySelectorAll('.video-card').forEach(card => {
+                card.addEventListener('click', function(e) {
+                    const url = this.dataset.url;
+                    if (url) {
+                        window.open(url, '_blank');
+                    }
+                });
+            });
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        //  INIT
+        // ─────────────────────────────────────────────────────────────
+
+        renderVideos();
+        renderTabs('All');
+
+        console.log('✅ Video gallery loaded — ' + videos.length + ' videos');
+    </script>
+</body>
+</html>
