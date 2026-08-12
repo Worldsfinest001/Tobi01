@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize with welcome message if empty
     if (chatBox.children.length === 0) {
-        appendMessage('bot', "Hello! I'm Isreal. How can I help you?");
+        appendMessage('bot', "Hello! I'm Tobi. How can I help you?");
     }
 
     // Toggle chatbot visibility
@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function getResponseByKey(key, input) {
         const responses = {
-            greetings: "Hello! I'm Isreal, your workflow automation consultant. I specialize in helping businesses streamline their processes using platforms like Monday.com, ClickUp, Notion, and Airtable. How can I assist you today?",
+            greetings: "Hello! I'm Tobi, your workflow automation consultant. I specialize in helping businesses streamline their processes using platforms like Monday.com, ClickUp, Notion, and Airtable. How can I assist you today?",
             help: "I can help with:\n\n1. Workflow design and automation\n2. Process mapping and optimization\n3. SOP documentation\n4. Platform-specific questions\n5. Pricing and service details\n\nWhat specifically would you like to know?",
             pricing: "Pricing depends on several factors:\n\n- Complexity of your workflow\n- Number of platforms to integrate\n- Level of automation required\n- Customization needs\n\nFor a basic workflow setup, projects typically start at $500. Complex automations with multiple integrations can range from $1,500-$5,000.\n\nWould you like me to connect you for a free consultation?",
             monday: "Monday.com is one of my specialties! Here's what I can help with:\n\n• Custom board creation with automations\n• Lead generation forms with automated workflows\n• Integration with CRM tools\n• Dashboard customization for analytics\n• Time tracking and project management setups\n\nWould you like to see some sample Monday.com workflows?",
